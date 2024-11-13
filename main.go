@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 // ANSI color codes
@@ -17,14 +18,44 @@ const (
 	ColorGray  = "\033[90m"
 )
 
+// Spinner symbols
+var spinner = []string{"|", "/", "-", "\\"}
+
+func showLoading() chan bool {
+	done := make(chan bool)
+	go func() {
+		i := 0
+		for {
+			select {
+			case <-done:
+				return
+			default:
+				fmt.Printf("\r%s Loading... %s %s", ColorCyan, spinner[i%len(spinner)], ColorReset)
+				time.Sleep(100 * time.Millisecond)
+				i++
+			}
+		}
+	}()
+	return done
+}
+
 func main() {
+	// Start the loading spinner
+	done := showLoading()
+
 	// Use `lsof` to check active ports and their processes
 	cmd := exec.Command("lsof", "-i", "-P", "-n")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
 	// Check for errors when running the command
-	if err := cmd.Run(); err != nil {
+	err := cmd.Run()
+
+	// Stop the loading spinner
+	close(done)
+	fmt.Print("\r\033[K") // Clear the loading line
+
+	if err != nil {
 		fmt.Println("Error executing command:", err)
 		return
 	}
