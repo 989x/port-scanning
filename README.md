@@ -14,26 +14,38 @@ A lightweight and efficient Go application designed to monitor active ports and 
 - Works seamlessly on Ubuntu and other Linux distributions.
 - Summarizes total active connections at the end of the output for quick analysis.
 
+## Project Structure
+
+```plaintext
+project-root/
+├── cmd/
+│   └── main.go         # Main entry point of the application
+├── internal/
+│   ├── colors/
+│   │   └── colors.go   # ANSI color codes for text
+│   └── ports/
+│       └── ports.go    # Port checking and display logic
+└── go.mod              # Go module file
+```
+
+- `cmd/main.go`: The main entry point of the application that coordinates the functionalities.
+- `internal/colors/colors.go`: Defines ANSI color codes for terminal text coloring.
+- `internal/ports/ports.go`: Contains the logic for retrieving and displaying active port information.
+
 ## Requirements
 
 - Go 1.18 or higher
 - `lsof` command should be available on the system (included in most Linux distributions)
 - `ss` command is optional but recommended for enhanced network diagnostics
 
-## Installation
+## Run Go App
 
-1. Clone the repository and navigate to the project directory:
+1. Build the Go application:
    ```bash
-   git clone https://github.com/yourusername/go-port-monitor.git
-   cd go-port-monitor
+   go build -o port-monitor cmd/main.go
    ```
 
-2. Build the Go application:
-   ```bash
-   go build -o port-monitor main.go
-   ```
-
-3. Run the application:
+2. Run the application:
    ```bash
    ./port-monitor
    ```
