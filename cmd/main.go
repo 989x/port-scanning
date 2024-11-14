@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 // Process represents each row in the table
@@ -35,38 +36,45 @@ func ParseData(line string) Process {
 	}
 }
 
-// DisplayTable displays the processes in the "Bracketed Process Summary" style with grouping by command
+// DisplayTable displays the processes in the "Bracketed Process Summary" style with a summary count for each command
 func DisplayTable(processes []Process) {
-	var lastCommand string
+	commandGroups := make(map[string][]Process)
 
+	// Group processes by command
 	for _, p := range processes {
-		// Determine protocol type from the command name and network type
-		protocol := "Unknown"
-		if strings.Contains(p.Name, "TCP") {
-			protocol = "TCP"
-		} else if strings.Contains(p.Name, "UDP") {
-			protocol = "UDP"
-		}
+		commandGroups[p.Command] = append(commandGroups[p.Command], p)
+	}
 
-		// Check if we are in a new group (new command)
-		if p.Command != lastCommand {
-			// Add a newline to separate groups if this is not the first group
-			if lastCommand != "" {
-				fmt.Println()
+	// Display each command group with a summary and detailed information
+	for command, group := range commandGroups {
+		// Display summary header
+		fmt.Printf("%s found %d entries\n\n", command, len(group))
+
+		// Display each process in the group with the "Bracketed Process Summary" format
+		for _, p := range group {
+			// Determine protocol type from the command name and network type
+			protocol := "Unknown"
+			if strings.Contains(p.Name, "TCP") {
+				protocol = "TCP"
+			} else if strings.Contains(p.Name, "UDP") {
+				protocol = "UDP"
 			}
-			lastCommand = p.Command
+
+			// Print the bracketed summary line
+			fmt.Printf("[ %s - %s %s on %s ]\n", p.Command, p.Type, protocol, p.Name)
+
+			// Print the detailed information line
+			fmt.Printf("  PID: %s | User: %s | Node: %s | FD: %s | Size: %s\n",
+				p.PID, p.User, p.Node, p.FD, p.SizeOff)
 		}
-
-		// Print the bracketed summary line
-		fmt.Printf("[ %s - %s %s on %s ]\n", p.Command, p.Type, protocol, p.Name)
-
-		// Print the detailed information line
-		fmt.Printf("  PID: %s | User: %s | Node: %s | FD: %s | Size: %s\n",
-			p.PID, p.User, p.Node, p.FD, p.SizeOff)
+		fmt.Println() // Add spacing between groups
 	}
 }
 
 func main() {
+	// Record the start time
+	startTime := time.Now()
+
 	// Run the lsof command to get process information
 	out, err := exec.Command("lsof", "-i").Output()
 	if err != nil {
@@ -85,6 +93,17 @@ func main() {
 		}
 	}
 
-	// Display the table in "Bracketed Process Summary" style with grouping
+	// Enhanced HEAD section with formatting and details
+	totalProcesses := len(processes)
+	duration := time.Since(startTime)
+
+	// Add a blank line for separation
+	fmt.Println()
+	fmt.Printf("Program: Process Summary Report\n")
+	fmt.Printf("Generated on: %s\n", startTime.Format("Monday, January 2, 2006 - 15:04:05 MST"))
+	fmt.Printf("Duration: %v\n", duration)
+	fmt.Printf("Total Processes Found: %d\n\n", totalProcesses)
+
+	// Display the table in "Bracketed Process Summary" style with summaries
 	DisplayTable(processes)
 }

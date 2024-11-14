@@ -12,7 +12,7 @@ A lightweight and efficient Go application for monitoring active ports and displ
   - **File Descriptor (FD)**, **Type**, **Device**, **Size/Offset**, **Node**, and **Port Name**.
 - **Commands Used**: Utilizes `lsof` and optionally `ss` to gather port and process information.
 - **Platform Compatibility**: Primarily optimized for Ubuntu but compatible with other Linux distributions.
-- **Summarized Output**: Provides a footer summary of total active connections.
+- **Summarized Output**: Provides a summary section including total active processes, execution time, and timestamp.
 
 ## Project Structure
 
@@ -24,8 +24,6 @@ project-root/
 ```
 
 - **`cmd/main.go`**: Coordinates application functionalities.
-- **`internal/colors/colors.go`**: Defines ANSI color codes for enhanced terminal text display.
-- **`internal/ports/ports.go`**: Manages logic for retrieving and displaying active port data.
 
 ## Requirements
 
@@ -47,25 +45,32 @@ project-root/
 
 ## Output Format
 
-The application presents process and port information in the **"Bracketed Process Summary"** format, providing a user-friendly, structured display:
+The application presents process and port information in the **"Bracketed Process Summary"** format with an informative **HEAD** section.
 
-- **Example Output**:
-  ```plaintext
-  [ sshd - IPv4 TCP on *:22 ]
-    PID: 1256 | User: root | Node: 12345 | FD: 3u | Size: 0t0
+### Example Output:
+```plaintext
+Program: Process Summary Report
+Generated on: Thursday, November 14, 2024 - 11:38:11 +07
+Duration: 135.760208ms
+Total Processes Found: 62
 
-  [ apache2 - IPv6 TCP on *:80 ]
-    PID: 2246 | User: www-data | Node: 67891 | FD: 4u | Size: 0t0
-  ```
+sshd found 7 entries
 
-- **Color-Coded Output** (if color display is enabled):
-  - **Command** in green
-  - **PID** in red
-  - **User** in blue
-  - Other details in gray for readability
+[ sshd - IPv4 TCP on *:22 ]
+  PID: 1256 | User: root | Node: 12345 | FD: 3u | Size: 0t0
 
-- **Footer Summary**:
-  Displays the total number of active connections at the bottom for quick reference.
+apache2 found 7 entries
+
+[ apache2 - IPv6 TCP on *:80 ]
+  PID: 2246 | User: www-data | Node: 67891 | FD: 4u | Size: 0t0
+```
+
+### Output Sections
+1. **HEAD Section**: 
+   - Displays program name, generation time, execution duration, and total number of processes found.
+   
+2. **Bracketed Process Summary**: 
+   - Lists each process with bracketed command information, followed by PID, user, node, FD, and size.
 
 ## Troubleshooting
 
