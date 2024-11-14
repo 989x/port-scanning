@@ -56,13 +56,13 @@ Total Processes Found: 62
 
 sshd found 7 entries
 
-[ sshd - IPv4 TCP on *:22 ]
-  PID: 1256 | User: root | Node: 12345 | FD: 3u | Size: 0t0
+ sshd - IPv4 TCP on *:22
+ ❯ PID: 1256 | User: root | Node: 12345 | FD: 3u | Size: 0t0
 
 apache2 found 7 entries
 
-[ apache2 - IPv6 TCP on *:80 ]
-  PID: 2246 | User: www-data | Node: 67891 | FD: 4u | Size: 0t0
+ apache2 - IPv6 TCP on *:80
+ ❯ PID: 2246 | User: www-data | Node: 67891 | FD: 4u | Size: 0t0
 ```
 
 ### Output Sections

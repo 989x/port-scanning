@@ -45,27 +45,32 @@ func DisplayTable(processes []Process) {
 		commandGroups[p.Command] = append(commandGroups[p.Command], p)
 	}
 
+	// Define the custom symbol
+	customSymbol := "❯"
+
 	// Display each command group with a summary and detailed information
 	for command, group := range commandGroups {
 		// Display summary header
 		fmt.Printf("%s found %d entries\n\n", command, len(group))
 
-		// Display each process in the group with the "Bracketed Process Summary" format
+		// Display each process in the group with the new format
 		for _, p := range group {
-			// Determine protocol type from the command name and network type
+			// Determine protocol type from the name or type field
 			protocol := "Unknown"
 			if strings.Contains(p.Name, "TCP") {
 				protocol = "TCP"
 			} else if strings.Contains(p.Name, "UDP") {
 				protocol = "UDP"
+			} else if p.Type == "IPv4" || p.Type == "IPv6" {
+				protocol = "IP" // General IP if neither TCP nor UDP is specified
 			}
 
-			// Print the bracketed summary line
-			fmt.Printf("[ %s - %s %s on %s ]\n", p.Command, p.Type, protocol, p.Name)
+			// Print the main line
+			fmt.Printf(" %s - %s %s on %s \n", p.Command, p.Type, protocol, p.Name)
 
-			// Print the detailed information line
-			fmt.Printf("  PID: %s | User: %s | Node: %s | FD: %s | Size: %s\n",
-				p.PID, p.User, p.Node, p.FD, p.SizeOff)
+			// Print the indented detail line with the custom symbol
+			fmt.Printf(" %s PID: %s | User: %s | Node: %s | FD: %s | Size: %s\n",
+				customSymbol, p.PID, p.User, p.Node, p.FD, p.SizeOff)
 		}
 		fmt.Println() // Add spacing between groups
 	}
