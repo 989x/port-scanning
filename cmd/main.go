@@ -20,7 +20,7 @@ type Process struct {
 	Name    string
 }
 
-// ParseData parses each line of data into a Process struct
+// ParseData converts a line of process data into a Process struct
 func ParseData(line string) Process {
 	fields := strings.Fields(line)
 	return Process{
@@ -36,6 +36,7 @@ func ParseData(line string) Process {
 	}
 }
 
+// DisplayTable groups and formats process information
 func DisplayTable(processes []Process) {
 	commandGroups := make(map[string][]Process)
 
@@ -44,55 +45,49 @@ func DisplayTable(processes []Process) {
 		commandGroups[p.Command] = append(commandGroups[p.Command], p)
 	}
 
-	customSymbol := "•"
+	// Color codes for formatting
+	brightWhite := "\033[1;37m"
+	regularWhite := "\033[0;37m"
+	lightGreen := "\033[1;32m"
+	resetColor := "\033[0m"
 
-	brightWhite := "\033[1;37m"  // Bright white for headers
-	regularWhite := "\033[0;37m" // Regular white for main text
-	lightGreen := "\033[1;32m"   // Light green for details
-	resetColor := "\033[0m"      // Reset to default color
-
-	// Display each command group with a summary and detailed information
+	// Display grouped command summaries with detailed info
 	for command, group := range commandGroups {
-		// Display summary header in bright white
 		fmt.Printf("%s%s found %d entries%s\n", brightWhite, command, len(group), resetColor)
 
-		// Display each process in the group with the new format
 		for _, p := range group {
-			// Determine protocol type from the name or type field
+			// Determine protocol type from name or type field
 			protocol := "Unknown"
 			if strings.Contains(p.Name, "TCP") {
 				protocol = "TCP"
 			} else if strings.Contains(p.Name, "UDP") {
 				protocol = "UDP"
 			} else if p.Type == "IPv4" || p.Type == "IPv6" {
-				protocol = "IP" // General IP if neither TCP nor UDP is specified
+				protocol = "IP"
 			}
 
 			fmt.Printf(" %s%s%s - %s%s %s on %s%s\n",
 				regularWhite, p.Command, resetColor, lightGreen, p.Type, protocol, p.Name, resetColor)
 
-			fmt.Printf(" %s %s PID: %s | User: %s | Node: %s | FD: %s | Size: %s%s\n",
-				regularWhite, customSymbol, p.PID, p.User, p.Node, p.FD, p.SizeOff, resetColor)
+			fmt.Printf(" %s • PID: %s | User: %s | Node: %s | FD: %s | Size: %s%s\n",
+				regularWhite, p.PID, p.User, p.Node, p.FD, p.SizeOff, resetColor)
 		}
-		fmt.Println() // Add spacing between groups
+		fmt.Println() // Space between groups
 	}
 }
 
 func main() {
-	// Record the start time
-	startTime := time.Now()
+	startTime := time.Now() // Start time for duration calculation
 
-	// Run the lsof command to get process information
+	// Run `lsof` to gather process information
 	out, err := exec.Command("lsof", "-i").Output()
 	if err != nil {
 		fmt.Println("Error executing command:", err)
 		return
 	}
 
-	// Split output into lines
+	// Process output into structured data
 	lines := strings.Split(string(out), "\n")
-
-	// Skip header and parse each line
 	var processes []Process
 	for _, line := range lines[1:] {
 		if line != "" {
@@ -100,17 +95,15 @@ func main() {
 		}
 	}
 
-	// Enhanced HEAD section with formatting and details
+	// Display header with report details
 	totalProcesses := len(processes)
 	duration := time.Since(startTime)
-
-	// Add a blank line for separation
 	fmt.Println()
 	fmt.Printf("Program: Process Summary Report\n")
 	fmt.Printf("Generated on: %s\n", startTime.Format("Monday, January 2, 2006 - 15:04:05 MST"))
 	fmt.Printf("Duration: %v\n", duration)
 	fmt.Printf("Total Processes Found: %d\n\n", totalProcesses)
 
-	// Display the table with summaries
+	// Output process table
 	DisplayTable(processes)
 }
