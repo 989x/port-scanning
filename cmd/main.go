@@ -44,13 +44,12 @@ func DisplayTable(processes []Process) {
 		commandGroups[p.Command] = append(commandGroups[p.Command], p)
 	}
 
-	// Define the custom symbol
 	customSymbol := "•"
 
-	// Color codes
-	brightWhite := "\033[1;37m"  // Bright white
-	regularWhite := "\033[0;37m" // Regular white
-	resetColor := "\033[0m"      // Reset to default
+	brightWhite := "\033[1;37m"  // Bright white for headers
+	regularWhite := "\033[0;37m" // Regular white for main text
+	lightGreen := "\033[1;32m"   // Light green for details
+	resetColor := "\033[0m"      // Reset to default color
 
 	// Display each command group with a summary and detailed information
 	for command, group := range commandGroups {
@@ -69,10 +68,9 @@ func DisplayTable(processes []Process) {
 				protocol = "IP" // General IP if neither TCP nor UDP is specified
 			}
 
-			// Print the main line in regular white with an indent for command details
-			fmt.Printf("%s %s - %s %s on %s%s\n", regularWhite, p.Command, p.Type, protocol, p.Name, resetColor)
+			fmt.Printf(" %s%s%s - %s%s %s on %s%s\n",
+				regularWhite, p.Command, resetColor, lightGreen, p.Type, protocol, p.Name, resetColor)
 
-			// Print the indented detail line with light gray color
 			fmt.Printf(" %s %s PID: %s | User: %s | Node: %s | FD: %s | Size: %s%s\n",
 				regularWhite, customSymbol, p.PID, p.User, p.Node, p.FD, p.SizeOff, resetColor)
 		}
@@ -113,6 +111,6 @@ func main() {
 	fmt.Printf("Duration: %v\n", duration)
 	fmt.Printf("Total Processes Found: %d\n\n", totalProcesses)
 
-	// Display the table in "Bracketed Process Summary" style with summaries
+	// Display the table with summaries
 	DisplayTable(processes)
 }
