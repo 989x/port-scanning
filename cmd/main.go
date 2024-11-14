@@ -46,7 +46,7 @@ func DisplayTable(processes []Process) {
 	}
 
 	// Define the custom symbol
-	customSymbol := "❯"
+	customSymbol := "•"
 
 	// Display each command group with a summary and detailed information
 	for command, group := range commandGroups {
