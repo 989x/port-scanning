@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"port-watcher/internal/colors"
-	"port-watcher/internal/ports"
+	"port-scanning/internal/colors"
+	"port-scanning/internal/ports"
 )
 
 func main() {

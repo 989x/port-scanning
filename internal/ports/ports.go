@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
-	"port-watcher/internal/colors"
+	"port-scanning/internal/colors"
 	"strings"
 )
 
