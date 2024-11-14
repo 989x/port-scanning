@@ -1,18 +1,18 @@
 # Go Port Monitor
 
-A lightweight and efficient Go application designed to monitor active ports and display details about the processes using them on a Linux server, especially optimized for Ubuntu.
+A lightweight and efficient Go application for monitoring active ports and displaying process details on a Linux server, optimized for Ubuntu.
 
 ## Features
 
-- Lists all active ports and associated process information on the server.
-- Displays process details, including:
-  - **Command**: The name of the process
+- **Displays Active Ports and Processes**: Lists all active ports and associated process information on the server.
+- **Process Details**:
+  - **Command**: Process name
   - **PID**: Process ID
-  - **User**: User who owns the process
+  - **User**: Process owner
   - **File Descriptor (FD)**, **Type**, **Device**, **Size/Offset**, **Node**, and **Port Name**.
-- Uses `lsof` and optionally `ss` commands to retrieve port and process data.
-- Works seamlessly on Ubuntu and other Linux distributions.
-- Summarizes total active connections at the end of the output for quick analysis.
+- **Commands Used**: Utilizes `lsof` and optionally `ss` to gather port and process information.
+- **Platform Compatibility**: Primarily optimized for Ubuntu but compatible with other Linux distributions.
+- **Summarized Output**: Provides a footer summary of total active connections.
 
 ## Project Structure
 
@@ -20,64 +20,62 @@ A lightweight and efficient Go application designed to monitor active ports and 
 project-root/
 ├── cmd/
 │   └── main.go         # Main entry point of the application
-├── internal/
-│   ├── colors/
-│   │   └── colors.go   # ANSI color codes for text
-│   └── ports/
-│       └── ports.go    # Port checking and display logic
 └── go.mod              # Go module file
 ```
 
-- `cmd/main.go`: The main entry point of the application that coordinates the functionalities.
-- `internal/colors/colors.go`: Defines ANSI color codes for terminal text coloring.
-- `internal/ports/ports.go`: Contains the logic for retrieving and displaying active port information.
+- **`cmd/main.go`**: Coordinates application functionalities.
+- **`internal/colors/colors.go`**: Defines ANSI color codes for enhanced terminal text display.
+- **`internal/ports/ports.go`**: Manages logic for retrieving and displaying active port data.
 
 ## Requirements
 
-- Go 1.18 or higher
-- `lsof` command should be available on the system (included in most Linux distributions)
-- `ss` command is optional but recommended for enhanced network diagnostics
+- **Go** 1.18 or higher
+- **lsof**: Essential for retrieving port information (pre-installed on most Linux distributions).
+- **ss** (optional): Recommended for enhanced network diagnostics.
 
-## Run Go App
+## Installation & Usage
 
-1. Build the Go application:
+1. **Build the Application**:
    ```bash
    go build -o port-monitor cmd/main.go
    ```
 
-2. Run the application:
+2. **Run the Application**:
    ```bash
    ./port-monitor
    ```
 
-## Usage
+## Output Format
 
-- When executed, the application will list all active ports along with detailed process information such as the command, PID, user, and port specifics.
+The application presents process and port information in the **"Bracketed Process Summary"** format, providing a user-friendly, structured display:
 
-- The output is color-coded to enhance readability:
-  - **Command** names are highlighted in green.
-  - **PID** is displayed in red.
-  - **User** details are shown in blue.
-  - Other fields, such as **FD**, **Type**, and **Device**, use gray for differentiation.
+- **Example Output**:
+  ```plaintext
+  [ sshd - IPv4 TCP on *:22 ]
+    PID: 1256 | User: root | Node: 12345 | FD: 3u | Size: 0t0
 
-- **Footer Summary**: The total number of active connections is shown at the bottom for a quick summary.
+  [ apache2 - IPv6 TCP on *:80 ]
+    PID: 2246 | User: www-data | Node: 67891 | FD: 4u | Size: 0t0
+  ```
 
-Example output:
-```
-COMMAND       PID        USER       FD     TYPE     DEVICE    SIZE/OFF   NODE       NAME
-sshd          1256       root       3u     IPv4     12345     0t0        TCP        *:22
-apache2       2246       www        4u     IPv6     67891     0t0        TCP        *:80
-───────────────────────────────────────────────────────────────────────────────────────────
-Total Active Connections: 2
-```
+- **Color-Coded Output** (if color display is enabled):
+  - **Command** in green
+  - **PID** in red
+  - **User** in blue
+  - Other details in gray for readability
+
+- **Footer Summary**:
+  Displays the total number of active connections at the bottom for quick reference.
 
 ## Troubleshooting
 
-- Ensure `lsof` is installed if you encounter errors about missing commands:
+- **Missing `lsof` Command**: Install with:
   ```bash
   sudo apt-get install lsof
   ```
-- If `ss` is also required, install it with:
+- **Optional `ss` Command**: Install for extended network details:
   ```bash
   sudo apt-get install iproute2
   ```
+
+This tool provides a straightforward approach for monitoring active connections on your server, making port management efficient and insightful.
