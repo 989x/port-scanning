@@ -36,7 +36,6 @@ func ParseData(line string) Process {
 	}
 }
 
-// DisplayTable displays the processes in the "Bracketed Process Summary" style with a summary count for each command
 func DisplayTable(processes []Process) {
 	commandGroups := make(map[string][]Process)
 
@@ -56,7 +55,7 @@ func DisplayTable(processes []Process) {
 	// Display each command group with a summary and detailed information
 	for command, group := range commandGroups {
 		// Display summary header in bright white
-		fmt.Printf("%s%s found %d entries%s\n\n", brightWhite, command, len(group), resetColor)
+		fmt.Printf("%s%s found %d entries%s\n", brightWhite, command, len(group), resetColor)
 
 		// Display each process in the group with the new format
 		for _, p := range group {
@@ -70,11 +69,11 @@ func DisplayTable(processes []Process) {
 				protocol = "IP" // General IP if neither TCP nor UDP is specified
 			}
 
-			// Print the main line in regular white
-			fmt.Printf("%s %s - %s %s on %s %s\n", regularWhite, p.Command, p.Type, protocol, p.Name, resetColor)
+			// Print the main line in regular white with an indent for command details
+			fmt.Printf("%s %s - %s %s on %s%s\n", regularWhite, p.Command, p.Type, protocol, p.Name, resetColor)
 
 			// Print the indented detail line with light gray color
-			fmt.Printf("%s %s PID: %s | User: %s | Node: %s | FD: %s | Size: %s%s\n",
+			fmt.Printf(" %s %s PID: %s | User: %s | Node: %s | FD: %s | Size: %s%s\n",
 				regularWhite, customSymbol, p.PID, p.User, p.Node, p.FD, p.SizeOff, resetColor)
 		}
 		fmt.Println() // Add spacing between groups
